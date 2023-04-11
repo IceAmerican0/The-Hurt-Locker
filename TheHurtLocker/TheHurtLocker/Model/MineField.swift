@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Board {
+public struct Board {
     let width: Int
     let height: Int
     var cells: [[Cell]]
@@ -35,7 +35,7 @@ struct Board {
     }
 }
 
-struct Cell {
+public struct Cell {
     var isMine: Bool = false
     var isRevealed: Bool = false
     var isFlagged: Bool = false
