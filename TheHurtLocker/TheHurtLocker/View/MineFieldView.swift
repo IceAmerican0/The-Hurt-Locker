@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MineFieldView: View {
     @State private var board: Board = Board(width: 10, height: 10)
+    @State private var flag = false
     
     var body: some View {
         VStack {
@@ -16,7 +17,11 @@ struct MineFieldView: View {
                 HStack {
                     ForEach(0..<board.width) { column in
                         Button(action: {
-                            print("")
+                            if board.cells[column][row].isMine {
+                                
+                            } else {
+                                
+                            }
                         }, label: {
                             Image(systemName: board.cells[column][row].isRevealed ? "circle.fill" : "circle")
                         })
