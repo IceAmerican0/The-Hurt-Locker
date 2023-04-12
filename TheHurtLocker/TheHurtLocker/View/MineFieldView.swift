@@ -9,22 +9,36 @@ import SwiftUI
 
 struct MineFieldView: View {
     @State private var board: Board = Board(width: 10, height: 10)
-    @State private var flag = false
+    @State private var isGameOver = false
     
     var body: some View {
         VStack {
-            ForEach(0..<board.height) { row in
+            ForEach(0..<board.height, id: \.self) { row in
                 HStack {
-                    ForEach(0..<board.width) { column in
+                    ForEach(0..<board.width, id: \.self) { column in
+                        let isClicked = board.cells[column][row]
                         Button(action: {
-                            if board.cells[column][row].isMine {
-                                
-                            } else {
-                                
+                            if isClicked.isRevealed || isClicked.isFlagged {
+                                return
                             }
+                            
+                            if isClicked.isMine {
+                                isGameOver = true
+                            }
+                            
+                            board.cells[column][row].isRevealed = true
                         }, label: {
-                            Image(systemName: board.cells[column][row].isRevealed ? "circle.fill" : "circle")
+                            if isClicked.isFlagged {
+                                Image(systemName: "flag")
+                            } else if isClicked.isRevealed {
+                                Image(systemName: isClicked.isMine ? "circle.fill" : "1.circle")
+                            } else {
+                                Image(systemName: "circle")
+                            }
                         })
+                            .simultaneousGesture(
+                                LongPressGesture().onEnded({ _ in board.cells[column][row].isFlagged.toggle() })
+                            )
                     }
                 }
             }
