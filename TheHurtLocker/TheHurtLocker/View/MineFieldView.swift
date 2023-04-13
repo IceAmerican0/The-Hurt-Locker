@@ -16,7 +16,7 @@ struct MineFieldView: View {
             ForEach(0..<board.height, id: \.self) { row in
                 HStack {
                     ForEach(0..<board.width, id: \.self) { column in
-                        let isClicked = board.cells[column][row]
+                        let isClicked = board.cells[row][column]
                         Button(action: {
                             if isClicked.isRevealed || isClicked.isFlagged {
                                 return
@@ -26,7 +26,7 @@ struct MineFieldView: View {
                                 isGameOver = true
                             }
                             
-                            board.cells[column][row].isRevealed = true
+                            board.cells[row][column].isRevealed = true
                         }, label: {
                             if isClicked.isFlagged {
                                 Image(systemName: "flag")
@@ -37,7 +37,7 @@ struct MineFieldView: View {
                             }
                         })
                             .simultaneousGesture(
-                                LongPressGesture().onEnded({ _ in board.cells[column][row].isFlagged.toggle() })
+                                LongPressGesture().onEnded({ _ in board.cells[row][column].isFlagged.toggle() })
                             )
                     }
                 }

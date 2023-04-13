@@ -15,7 +15,7 @@ public struct Board {
     init(width: Int, height: Int) {
         self.width = width
         self.height = height
-        self.cells = Array(repeating: Array(repeating: Cell(), count: height), count: width)
+        self.cells = Array(repeating: Array(repeating: Cell(), count: width), count: height)
         self.cells = createMines(in: self.cells)
     }
 
@@ -25,11 +25,11 @@ public struct Board {
         for _ in 0..<numberOfMines {
             var randomRow = Int.random(in: 0..<height)
             var randomColumn = Int.random(in: 0..<width)
-            while updatedCells[randomColumn][randomRow].isMine {
+            while updatedCells[randomRow][randomColumn].isMine {
                 randomRow = Int.random(in: 0..<height)
                 randomColumn = Int.random(in: 0..<width)
             }
-            updatedCells[randomColumn][randomRow].isMine = true
+            updatedCells[randomRow][randomColumn].isMine = true
         }
         return updatedCells
     }
