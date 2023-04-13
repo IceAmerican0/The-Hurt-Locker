@@ -31,6 +31,35 @@ public struct Board {
             }
             updatedCells[randomRow][randomColumn].isMine = true
         }
+        return countNeighboringMines(cells: updatedCells)
+    }
+    
+    private func countNeighboringMines(cells: [[Cell]]) -> [[Cell]] {
+        var updatedCells = cells
+        
+        for row in 0..<self.width {
+            for column in 0..<self.height {
+                if updatedCells[row][column].isMine {
+                    continue
+                }
+
+                var neighboringMines = 0
+                
+                for neighboringRow in -1...1 {
+                    for neighboringColumn in -1...1 {
+                        if row + neighboringRow < 0 || row + neighboringRow >= self.width || column + neighboringColumn < 0 || column + neighboringColumn >= self.height {
+                            continue
+                        }
+
+                        if updatedCells[row + neighboringRow][column + neighboringColumn].isMine {
+                            neighboringMines += 1
+                        }
+                    }
+                }
+
+                updatedCells[row][column].neighboringMines = neighboringMines
+            }
+        }
         return updatedCells
     }
 }
@@ -39,5 +68,5 @@ public struct Cell {
     var isMine: Bool = false
     var isRevealed: Bool = false
     var isFlagged: Bool = false
-    var surroundingMines: Int = 0
+    var neighboringMines: Int = 0
 }
