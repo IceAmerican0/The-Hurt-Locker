@@ -9,7 +9,8 @@ import SwiftUI
 
 struct MineFieldView: View {
     @State private var board: Board = Board(width: 10, height: 10)
-    @State private var isGameOver = false
+    @State private var gameOver = false
+    @State private var gameCleared = false
     
     var body: some View {
         VStack {
@@ -22,13 +23,11 @@ struct MineFieldView: View {
                                 return
                             }
                             
-                            if selectedCell.isMine {
-                                isGameOver = true
-                            }
-                            
                             board.cells[row][column].isRevealed = true
                             
-                            if selectedCell.neighboringMines == 0 {
+                            if selectedCell.isMine {
+                                gameOver = true
+                            } else if selectedCell.neighboringMines == 0 {
                                 NeighboringEmptyCell(row: row, column: column)
                             }
                         }, label: {
@@ -41,8 +40,38 @@ struct MineFieldView: View {
                             }
                         })
                             .simultaneousGesture(
-                                LongPressGesture().onEnded({ _ in board.cells[row][column].isFlagged.toggle() })
+                                LongPressGesture().onEnded({ _ in
+                                    board.cells[row][column].isFlagged.toggle()
+                                    
+                                    let numberOfMines = Int(Double(board.width * board.height) * 0.15)
+                                    var isFlagged = numberOfMines
+                                    for row in 0..<board.width {
+                                        for column in 0..<board.height {
+                                            if board.cells[row][column].isFlagged {
+                                                isFlagged += 1
+                                            }
+                                        }
+                                    }
+                                    
+                                    if isFlagged == numberOfMines {
+                                        gameCleared = true
+                                    }
+                                })
                             )
+                            .alert("BOOM!", isPresented: $gameOver) {
+                                Button("Retry") {
+                                    reset()
+                                }
+                            } message: {
+                                Text("Game Over!!")
+                            }
+                            .alert("Game Clear!", isPresented: $gameCleared) {
+                                Button("") {
+                                    reset()
+                                }
+                            } message: {
+                                Text("Well Done!!")
+                            }
                     }
                 }
             }
@@ -52,18 +81,25 @@ struct MineFieldView: View {
     func NeighboringEmptyCell(row: Int, column: Int) {
         for neighboringRow in -1...1 {
             for neighboringColumn in -1...1 {
-                if row + neighboringRow < 0 || row + neighboringRow >= board.width || column + neighboringColumn < 0 || column + neighboringColumn >= board.height {
+                let row = row + neighboringRow
+                let column = column + neighboringColumn
+                
+                if row < 0 || row >= board.width || column < 0 || column >= board.height {
                     continue
                 }
                 
-                let row = row + neighboringRow
-                let column = column + neighboringColumn
                 if board.cells[row][column].neighboringMines == 0 {
                     board.cells[row][column].isRevealed = true
 //                    self.NeighboringEmptyCell(row: row, column: column)
                 }
             }
         }
+    }
+    
+    func reset() {
+        board = Board(width: 10, height: 10)
+        gameOver = false
+        gameCleared = false
     }
 }
 

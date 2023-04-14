@@ -47,11 +47,14 @@ public struct Board {
                 
                 for neighboringRow in -1...1 {
                     for neighboringColumn in -1...1 {
-                        if row + neighboringRow < 0 || row + neighboringRow >= self.width || column + neighboringColumn < 0 || column + neighboringColumn >= self.height {
+                        let row = row + neighboringRow
+                        let column = column + neighboringColumn
+                        
+                        if row < 0 || row >= self.width || column < 0 || column >= self.height {
                             continue
                         }
 
-                        if updatedCells[row + neighboringRow][column + neighboringColumn].isMine {
+                        if updatedCells[row][column].isMine {
                             neighboringMines += 1
                         }
                     }
